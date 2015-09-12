@@ -1,0 +1,28 @@
+temp <- tempfile()
+download.file("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip", temp)
+t1 <- read.table(unz(temp, "household_power_consumption.txt"), sep=";", header=TRUE, na.strings="?")
+unlink(temp); rm(temp)
+t2 <- t1[66637:69516,]; rm(t1)
+par(mfrow=c(2,2))
+with(t2, {
+  plot(Global_active_power, type="n", xlab="", xaxt="n", ylab="Global Active Power")
+  axis(1, at=c(1,1440,2880), labels=c("Thursday", "Friday", "Saturday"))
+  lines(t2$Global_active_power, type="l")
+  
+  plot(Voltage, type="n", xlab="datetime", xaxt="n")
+  axis(1, at=c(1,1440,2880), labels=c("Thursday", "Friday", "Saturday"))
+  lines(t2$Voltage, type="l", col="black")
+  
+  plot(Sub_metering_1, type="n", xlab="", xaxt="n", ylab="Energy sub metering")
+  lines(t2$Sub_metering_1, type="l", col="black")
+  lines(t2$Sub_metering_2, type="l", col="red")
+  lines(t2$Sub_metering_3, type="l", col="blue")
+  axis(1, at=c(1,1440,2880), labels=c("Thursday", "Friday", "Saturday"))
+  legend("topright", lty=1, col=c("black", "red", "blue"), bty="n", cex=0.75, legend=names(t2[7:9]))
+
+  plot(Global_reactive_power, type="n", xlab="datetime", xaxt="n")
+  axis(1, at=c(1,1440,2880), labels=c("Thursday", "Friday", "Saturday"))
+  lines(t2$Global_reactive_power, type="l", col="black")
+})
+dev.copy(png, file="plot4.png", width=480, height=480)
+dev.off()
